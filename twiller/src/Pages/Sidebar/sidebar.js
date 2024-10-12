@@ -29,7 +29,6 @@ const Sidebar = ({ handlelogout, user }) => {
   const navigate = useNavigate();
   const handleclick = (e) => {
     setanchorE1(e.currentTarget);
-    // console.log(e.currentTarget);
   };
   const handleclose = () => {
     setanchorE1(null);
@@ -72,7 +71,6 @@ const Sidebar = ({ handlelogout, user }) => {
             loggedinuser[0]?.profileImage
               ? loggedinuser[0].profileImage
               : user && user.photoURL
-            // : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
           }
         />
         <div className="user__info">
@@ -109,7 +107,6 @@ const Sidebar = ({ handlelogout, user }) => {
                 loggedinuser[0]?.profileImage
                   ? loggedinuser[0]?.profileImage
                   : user && user.photoURL
-                  // : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
               }
             />
             <div className="user__info subUser__info">

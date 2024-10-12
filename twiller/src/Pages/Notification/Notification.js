@@ -3,7 +3,7 @@ import "../pages.css"
 const Notification = () => {
   return (
     <div className="page">
-      <h2 className="pageTitle">Welcome to Lists page</h2>
+      <h2 className="pageTitle">Welcome to notification page</h2>
     </div>
   );
 };

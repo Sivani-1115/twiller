@@ -20,7 +20,6 @@ async function run() {
       const user = req.body;
       console.log('req.body');
       console.log('Inserting user:',user);
-      // console.log(user)
       const result = await usercollection.insertOne(user);
       console.log('Insert result:',result);
       res.send(result);

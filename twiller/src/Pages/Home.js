@@ -7,10 +7,6 @@ import { useUserAuth } from "../context/UserAuthContext";
 const Home = () => {
   const {logOut,user}=useUserAuth()
   const navigate = useNavigate();
-  // const user = {
-  //   displayName: "bithead",
-  //   email: "bithead@gmail.com",
-  // };
   const handlelogout = async () => {
     try {
       await logOut()

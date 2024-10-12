@@ -21,17 +21,15 @@ const Tweetbox = () => {
   const handleuploadimage = (e) => {
     setisloading(true);
     const image = e.target.files[0];
-    // console.log(image)
     const formData = new FormData();
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=b0ea2f6cc0f276633b2a8a86d2c43335",
+        "https://api.imgbb.com/1/upload?key=7a985f4300bb2bc9848d7b5a3d4ebfae",
         formData
       )
       .then((res) => {
         setimageurl(res.data.data.display_url);
-        // console.log(res.data.data.display_url);
         setisloading(false);
       })
       .catch((e) => {
@@ -52,7 +50,7 @@ const Tweetbox = () => {
       setname(user?.displayName);
       setusername(email?.split("@")[0]);
     }
-    // console.log(name);
+    
     if (name) {
       const userpost = {
         profilephoto: userprofilepic,
@@ -62,7 +60,7 @@ const Tweetbox = () => {
         name: name,
         email: email,
       };
-      // console.log(userpost);
+      
       setpost("");
       setimageurl("");
       fetch("http://localhost:5000/post", {
