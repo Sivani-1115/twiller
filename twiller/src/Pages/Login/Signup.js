@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+// Signup.js
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import twitterimg from "../../image/twitter.jpeg";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -7,53 +8,101 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import "./login.css";
 
 const Signup = () => {
-  const [username, setusername] = useState("");
-  const [name, setname] = useState("");
-  const [email, setemail] = useState("");
-  const [error, seterror] = useState("");
-  const [password, setpassword] = useState("");
-  const { signUp } = useUserAuth();
-  const { googleSignIn } = useUserAuth();
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
+
+  const { signUp, googleSignIn, signInWithPhone, verifyPhoneCode } =
+    useUserAuth();
   const navigate = useNavigate();
 
-  const handlesubmit = async (e) => {
+  // Handle Email Signup
+  // Handle Email Signup
+  const handleEmailSignup = async (e) => {
     e.preventDefault();
-    seterror("");
+    setError(""); // Clear previous errors
     try {
+      // Assuming signUp is a function that returns a promise
       await signUp(email, password);
-      const user = {
-        username: username,
-        name: name,
-        email: email,
-      };
-      fetch("http://localhost:5000/register", {
+
+      // Define user object to send to the backend
+      const user = { username, name, email };
+
+      // Send user data to the backend
+      const response = await fetch("http://localhost:5000/register", {
         method: "POST",
         headers: {
-          "content-type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.acknowledged) {
-            console.log(data);
-            navigate("/");
-          }
-        });
+      });
+
+      const data = await response.json();
+      console.log(data); // Log the response to check the structure
+
+      if (data.acknowledged) {
+        navigate("/"); // Navigate to the home page on success
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } catch (error) {
-      seterror(error.message);
+      setError(error.message);
+      // Optionally remove this if you don't need both error messages and alerts
       window.alert(error.message);
     }
   };
-  const hanglegooglesignin = async (e) => {
+
+  // Handle Google Signup
+  const handleGoogleSignup = async (e) => {
     e.preventDefault();
     try {
+      // Assuming googleSignIn is a function that handles Google auth
       await googleSignIn();
-      navigate("/");
+      navigate("/"); // Navigate on successful Google sign-in
     } catch (error) {
-      console.log(error.message);
+      setError(error.message); // Display error if any
+      window.alert(error.message);
     }
   };
+
+  // Handle Phone Number Submission
+  const handlePhoneSubmit = async (e) => {
+    e.preventDefault();
+    setError(""); // Clear previous errors
+    try {
+      // Assuming signInWithPhone is a function for phone number authentication
+      await signInWithPhone(phoneNumber);
+      setIsCodeSent(true); // Set state indicating that the OTP has been sent
+      window.alert("OTP has been sent to your phone number.");
+    } catch (error) {
+      setError(error.message); // Display error if any
+      window.alert(error.message);
+    }
+  };
+
+  // Handle OTP Verification
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setError(""); // Clear previous errors
+    try {
+      // Assuming verifyPhoneCode is a function to verify the OTP
+      await verifyPhoneCode(otp);
+
+      // Optionally, you can send user info to your backend here if needed
+
+      setIsCodeSent(false); // Reset OTP sent state
+      navigate("/"); // Navigate on successful verification
+    } catch (error) {
+      setError(error.message); // Display error if any
+      window.alert(error.message);
+    }
+  };
+
   return (
     <>
       <div className="login-container">
@@ -62,52 +111,101 @@ const Signup = () => {
         </div>
 
         <div className="form-container">
-          <div className="">
+          <div className="form-box">
             <TwitterIcon className="Twittericon" style={{ color: "skyblue" }} />
             <h2 className="heading">Happening now</h2>
-            <div class="d-flex align-items-sm-center">
-              <h3 className="heading1"> Join twiller today</h3>
-            </div>
+            <div className="heading1"> Join Twiller today</div>
             {error && <p className="errorMessage">{error}</p>}
-            <form onSubmit={handlesubmit}>
+
+            {/* Email Signup Form */}
+            <form onSubmit={handleEmailSignup}>
               <input
                 className="display-name"
-                type="username"
+                type="text"
                 placeholder="@username"
-                onChange={(e) => setusername(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
               />
               <input
                 className="display-name"
-                type="name"
+                type="text"
                 placeholder="Enter Full Name"
-                onChange={(e) => setname(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
               />
               <input
                 className="email"
                 type="email"
                 placeholder="Email Address"
-                onChange={(e) => setemail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <input
                 className="password"
                 type="password"
                 placeholder="Password"
-                onChange={(e) => setpassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <div className="btn-login">
                 <button type="submit" className="btn">
-                  Sign Up
+                  Sign Up with Email
                 </button>
               </div>
             </form>
+
             <hr />
+
+            {/* Google Signup Button */}
             <div className="google-button">
               <GoogleButton
                 className="g-btn"
                 type="light"
-                onClick={hanglegooglesignin}
+                onClick={handleGoogleSignup}
               />
             </div>
+
+            <hr />
+
+            {/* Phone Number Signup Form */}
+            <form onSubmit={handlePhoneSubmit}>
+              <input
+                type="tel"
+                className="phone-number"
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+              <button type="submit" className="btn">
+                Send OTP
+              </button>
+            </form>
+
+            {/* OTP Verification Form */}
+            {isCodeSent && (
+              <form onSubmit={handleVerifyCode}>
+                <input
+                  type="text"
+                  className="otp-input"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+                <button type="submit" className="btn">
+                  Verify OTP
+                </button>
+              </form>
+            )}
+
+            {/* reCAPTCHA Container */}
+            <div id="recaptcha-container"></div>
+
             <div>
               Already have an account?
               <Link
